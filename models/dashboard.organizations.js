@@ -8,27 +8,15 @@ var OrganizationsSchema = new Schema({
         required:true
     },
     owner:{
-        type:String,
+        type:[String],
         required:true
     },
     _id:{
         type:Number,
         required:true
     },
-    billable:{
-        type:[Number],
-        required:false
-    },
-    bench:{
-        type:[Number],
-        required:false
-    },
     projects:{
         type:[String],
-        required:false
-    },
-    chart:{
-        type:String,
         required:false
     }
 });
