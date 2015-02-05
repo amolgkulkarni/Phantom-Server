@@ -6,10 +6,10 @@ module.exports=function(app){
         .get(organizations.list)
         .post(organizations.create);
 
-//    app.route('/api/organizations/:orgId')
-//        .get(organizations.read)
-//        .put(organizations.update)
-//        .delete(organizations.delete);
+    app.route('/api/organizations/:orgId')
+        .get(organizations.read)
+        //.put(organizations.update)
+        .delete(organizations.delete);
 
     app.param('orgId',organizations.organizationById);
 

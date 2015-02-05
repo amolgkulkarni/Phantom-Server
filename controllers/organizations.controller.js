@@ -23,29 +23,24 @@ exports.create=function(req,res){
 };
 
 exports.organizationById=function(req,res,next,id){
-
-    Todo.findOne({_id:id},function(err,organization){
+    Organizations.findOne({_id:id},function(err,organization){
         if(err){
             next(err);
         }
         if(organization){
-            req.organization=organization;
-            next();
+            res.send(organization);
         }
         else{
-            var error={
-                error:"Todo not found"
-            }
+            var error= { error:"Todo not found"};
             res.status(404).send(error);
         }
     });
 };
-//
-//exports.read=function(req,res){
+
+exports.read=function(req,res){
 //    res.send(req.todo);
-//}
-//
-//exports.delete=function(req,res){
+};
+exports.delete=function(req,res){
 //    var todo = req.todo;
 //    todo.remove(function(err){
 //        if(err){
@@ -57,4 +52,4 @@ exports.organizationById=function(req,res,next,id){
 //        }
 //    })
 //
-//}
+};
