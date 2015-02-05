@@ -12,5 +12,6 @@ module.exports = function(){
   });
 
   require('../models/dashboard.organizations.js');
+    require('../models/dashboard.projects.js');
   return db;
 }
