@@ -12,7 +12,7 @@ module.exports=function(){
   var app = express();
 
   app.use(cors());
-  app.use(favicon(path.join(__dirname,'../public/favicon.ico')));
+  app.use(favicon(path.join(__dirname,'../favicon.ico')));
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended:false}));
