@@ -8,7 +8,7 @@ module.exports=function(app){
 
     app.route('/api/organizations/:orgId')
         .get(organizations.read)
-        //.put(organizations.update)
+        .put(organizations.update)
         .delete(organizations.delete);
 
     app.param('orgId',organizations.organizationById);

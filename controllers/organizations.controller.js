@@ -28,7 +28,9 @@ exports.organizationById=function(req,res,next,id){
             next(err);
         }
         if(organization){
-            res.send(organization);
+            req.organization=organization;
+            next();
+            ///res.send(organization);
         }
         else{
             var error= { error:"Todo not found"};
@@ -38,18 +40,34 @@ exports.organizationById=function(req,res,next,id){
 };
 
 exports.read=function(req,res){
-//    res.send(req.todo);
+    res.send(req.organization);
 };
 exports.delete=function(req,res){
-//    var todo = req.todo;
-//    todo.remove(function(err){
-//        if(err){
-//            console.log(err);
-//            res.status(400).send(err.err);
-//        }
-//        else{
-//            res.send(todo);
-//        }
-//    })
-//
+    var organization = req.organization;
+    organization.remove(function(err){
+        if(err){
+            console.log(err);
+            res.status(400).send(err.err);
+        }
+        else{
+            res.send(organization);
+        }
+    })
+};
+
+exports.update=function(req,res){
+    var organization = req.organization;
+    for (var i in req.body) {
+        organization[i] = JSON.parse(JSON.stringify(req.body[i]));
+    }
+    organization.save(function(err){
+        if(err){
+            console.log(err);
+            res.status(400).send(err.err);
+        }
+        else{
+            res.send(organization);
+        }
+    })
+
 };
