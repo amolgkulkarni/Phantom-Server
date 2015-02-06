@@ -27,8 +27,7 @@ exports.create=function(req,res){
 };
 
 exports.projectById=function(req,res,next,id){
-
-    Todo.findOne({_id:id},function(err,project){
+    Projects.findOne({_id:id},function(err,project){
         if(err){
             next(err);
         }
@@ -39,8 +38,42 @@ exports.projectById=function(req,res,next,id){
         else{
             var error={
                 error:"Todo not found"
-            }
+            };
             res.status(404).send(error);
         }
     });
+};
+
+exports.read=function(req,res){
+    res.send(req.project);
+};
+
+exports.delete=function(req,res){
+    var project = req.project;
+    project.remove(function(err){
+        if(err){
+            console.log(err);
+            res.status(400).send(err.err);
+        }
+        else{
+            res.send(project);
+        }
+    })
+};
+
+exports.update=function(req,res){
+    var project = req.project;
+    for (var i in req.body) {
+        project[i] = JSON.parse(JSON.stringify(req.body[i]));
+    }
+    project.save(function(err){
+        if(err){
+            console.log(err);
+            res.status(400).send(err.err);
+        }
+        else{
+            res.send(project);
+        }
+    })
+
 };

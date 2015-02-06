@@ -9,10 +9,10 @@ module.exports=function(app){
         .get(projects.list)
         .post(projects.create);
 
-//    app.route('/api/organizations/:orgId')
-//        .get(organizations.read)
-//        .put(organizations.update)
-//        .delete(organizations.delete);
+    app.route('/api/projects/:prjId')
+        .get(projects.read)
+        .put(projects.update)
+        .delete(projects.delete);
 
     app.param('prjId',projects.projectById);
 
