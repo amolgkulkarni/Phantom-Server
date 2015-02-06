@@ -11,7 +11,8 @@ module.exports = function(){
     }
   });
 
-  require('../models/dashboard.organizations.js');
+    require('../models/dashboard.organizations.js');
     require('../models/dashboard.projects.js');
+    require('../models/dashboard.employees.js');
   return db;
 }
