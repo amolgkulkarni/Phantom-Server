@@ -15,20 +15,20 @@ exports.list=function(req,res,next){
 };
 
 exports.create=function(req,res){
-    var employees = new Employees (req.body);
-    employees.save(function(err){
+    var employee = new Employees (req.body);
+    employee.save(function(err){
         if(err){
             res.status(400).send(err.err);
         }
         else{
-            res.send(employees);
+            res.send(employee);
         }
     })
 };
 
 exports.employeeById=function(req,res,next,id){
 
-    Todo.findOne({_id:id},function(err,employee){
+    Employees.findOne({_id:id},function(err,employee){
         if(err){
             next(err);
         }

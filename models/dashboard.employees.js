@@ -10,17 +10,22 @@ var EmployeesSchema = new Schema({
         type:String,
         required:true
     },
-    org_id:{
-        type:Number,
-        required:true
+    organization:{
+        type:String,
+        required:false
     },
-    prj_id:{
+    projects:{
         type:[String],
-        required:true
+        required:false
     },
     _id:{
         type:Number,
         required:true
+    },
+    billable: {
+        type: Boolean,
+        required:false,
+        default: false
     }
 });
 mongoose.model('Employees',EmployeesSchema);
