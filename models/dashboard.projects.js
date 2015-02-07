@@ -12,18 +12,18 @@ var ProjectsSchema = new Schema({
     },
     start_date:{
         type:Date,
-        required:true
+        required:false
     },
     end_date:{
         type:Date,
-        required:true
+        required:false
     },
     _id:{
         type:Number,
         required:true
     },
-    org_id:{
-        type:Number,
+    organization:{
+        type:String,
         required:false
     },
     owner:{
@@ -32,15 +32,17 @@ var ProjectsSchema = new Schema({
     },
     openpositions:{
         type:Number,
-        required:false
+        required:false,
+        default: 0
     },
     reddays:{
         type:Number,
-        required:false
+        required:false,
+        default: 0
     },
-    people:{
+    employees:{
         type:[String],
-        required:true
+        required:false
     }
 });
 mongoose.model('Projects',ProjectsSchema);
