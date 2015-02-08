@@ -18,6 +18,10 @@ var EmployeesSchema = new Schema({
         type:[String],
         required:false
     },
+    skills:{
+        type:[String],
+        required:false
+    },
     _id:{
         type:Number,
         required:true
