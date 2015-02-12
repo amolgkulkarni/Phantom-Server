@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
     Organizations = mongoose.model('Organizations'),
+    OrganizationHistory = mongoose.model('OrganizationHistory'),
     Projects = mongoose.model('Projects');
 
 exports.list=function(req,res,next){
@@ -12,7 +13,7 @@ exports.list=function(req,res,next){
 };
 
 exports.create=function(req,res){
-    var organizations = new Organizations (req.body);
+    var organization = new Organizations (req.body);
 
     var newProjects = req.body.projects || [];
 
@@ -23,13 +24,15 @@ exports.create=function(req,res){
                 next(err);
             }
             if(project){
-                // TODO remove this from older organization.
-                Organizations.findOne({name:project.organization},function(err,org){
-                  org.projects.splice(org.projects.indexOf(project.name), 1);
-                  org.save(function(err){ });
-                });
+                // remove this project from older organization.
+                if (project.organization) {
+                  Organizations.findOne({name:project.organization},function(err,org){
+                    org.projects.splice(org.projects.indexOf(project.name), 1);
+                    org.save(function(err){ });
+                  });
+                }
 
-                project.organization = organizations.name;
+                project.organization = organization.name;
 
                 project.save(function(err){
                     if(err){
@@ -50,12 +53,12 @@ exports.create=function(req,res){
         });
     }
 
-    organizations.save(function(err){
+    organization.save(function(err){
         if(err){
             res.status(400).send(err.err);
         }
         else{
-            res.send(organizations);
+            res.send(organization);
         }
     })
 };
@@ -66,9 +69,30 @@ exports.organizationById=function(req,res,next,id){
             next(err);
         }
         if(organization){
-            req.organization=organization;
-            next();
-            ///res.send(organization);
+            // Get History
+            OrganizationHistory.find({orgId: organization._id}, {}, {skip:0, limit:10, sort:{'created': 1}},
+                function(err, orgHistory){
+                    var resOrg = {};
+                    var historyLen = orgHistory ? orgHistory.length: 0;
+                    resOrg.billable = [];
+                    resOrg.bench = [];
+                    resOrg.total = [];
+                    resOrg.labels = [];
+                    for (var idx= 0; idx < historyLen; idx++) {
+                        resOrg.billable.push(orgHistory[idx].billable);
+                        resOrg.bench.push(orgHistory[idx].bench);
+                        resOrg.total.push(orgHistory[idx].total);
+                        resOrg.labels.push(orgHistory[idx].created);
+                    }
+
+                    resOrg.projects = organization.projects;
+                    resOrg._id = organization._id;
+                    resOrg.name = organization.name;
+                    resOrg.owner = organization.owner;
+
+                    req.organization=resOrg;
+                    next();
+                });
         }
         else{
             var error= { error:"Todo not found"};
@@ -81,35 +105,26 @@ exports.read=function(req,res){
     res.send(req.organization);
 };
 exports.delete=function(req,res){
-    var organization = req.organization;
-
+    var organization = new Organizations(req.organization);
 
     var oldProjects = organization.projects || [];
     for (var idx = 0; idx < oldProjects.length; idx ++){
-        // remove this employee from project.employees
+        // remove this project from project.employees
         Projects.findOne({name:oldProjects[idx]},function(err,project){
             if(err){
                 next(err);
             }
             if(project){
 
-                // TODO add this project to new organization 'Synerzip
-                Organizations.findOne({name:'Synerzip'},function(err,org){
+                // add this project to parent organization
+                Organizations.findOne({name:organization.parent},function(err,org){
                     org.projects.push(project.name);
                     org.save(function(err){ });
                 });
 
-                project. organization = 'Synerzip'; // TODO dont allow synerzip to renamed or deleted;
+                project.organization = organization.parent;
 
-                project.save(function(err){
-                    if(err){
-                        console.log(err);
-                        //res.status(400).send(err.err);
-                    }
-                    else{
-                        //res.send(employee);
-                    }
-                });
+                project.save(function(err){});
             }
             else{
                 var error={
@@ -128,14 +143,14 @@ exports.delete=function(req,res){
         else{
             res.send(organization);
         }
-    })
+    });
 };
 
 exports.update=function(req,res){
-    var organization = req.organization;
+    var organization = new Organizations(req.organization);
 
 
-    var newOrganization = req.body;
+    var newOrganization = new Organizations(req.body);
 
     // req.body is new data while organization is old data
     var oldProjects = organization.projects || [];
@@ -150,23 +165,15 @@ exports.update=function(req,res){
                 }
                 if(project){
 
-                    // TODO add this project to new organization 'Synerzip
-                    Organizations.findOne({name:'Synerzip'},function(err,org){
+                    // add this project to new organization 'Synerzip
+                    Organizations.findOne({name:newOrganization.parent},function(err,org){
                         org.projects.push(project.name);
                         org.save(function(err){ });
                     });
 
-                    project.organization = 'Synerzip';
+                    project.organization = newOrganization.parent;
 
-                    project.save(function(err){
-                        if(err){
-                            console.log(err);
-                            //res.status(400).send(err.err);
-                        }
-                        else{
-                            //res.send(employee);
-                        }
-                    });
+                    project.save(function(err){});
                 }
                 else{
                     var error={
@@ -185,7 +192,7 @@ exports.update=function(req,res){
                     next(err);
                 }
                 if(project){
-                    // TODO remove this project from older organization
+                    // remove this project from older organization
                     Organizations.findOne({name:project.organization},function(err,org){
                         org.projects.splice(org.projects.indexOf(project.name), 1);
                         org.save(function(err){ });

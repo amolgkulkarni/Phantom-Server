@@ -9,7 +9,7 @@ var OrganizationsSchema = new Schema({
     },
     owner:{
         type:[String],
-        required:true
+        required:false
     },
     _id:{
         type:Number,

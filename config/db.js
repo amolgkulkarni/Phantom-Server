@@ -14,5 +14,7 @@ module.exports = function(){
     require('../models/dashboard.organizations.js');
     require('../models/dashboard.projects.js');
     require('../models/dashboard.employees.js');
+    require('../models/dashboard.projecthistory.js');
+    require('../models/dashboard.organizationhistory.js');
   return db;
 }

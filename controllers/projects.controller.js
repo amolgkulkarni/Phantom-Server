@@ -4,6 +4,7 @@
 var mongoose = require('mongoose'),
     Projects = mongoose.model('Projects'),
     Employees = mongoose.model('Employees'),
+   ProjectHistory = mongoose.model('ProjectHistory'),
     Organizations = mongoose.model('Organizations');
 
 exports.list=function(req,res,next){
@@ -51,12 +52,13 @@ exports.create=function(req,res){
     }
 
 
-    // TODO add this project to new organization
-    console.log(projects);
-    Organizations.findOne({name:projects.organization},function(err,org){
-        org.projects.push(projects.name);
-        org.save(function(err){ });
-    });
+    //add this project to new organization
+    if (projects.organization) {
+      Organizations.findOne({name:projects.organization},function(err,org){
+          org.projects.push(projects.name);
+          org.save(function(err){ });
+      });
+    }
 
 
 
@@ -76,8 +78,33 @@ exports.projectById=function(req,res,next,id){
             next(err);
         }
         if(project){
-            req.project=project;
-            next();
+            // Get History
+            ProjectHistory.find({projId: project._id}, {}, {skip:0, limit:10, sort:{'created': 1}},
+                function(err, projHistory){
+                    var resProj = {};
+                    var historyLen = projHistory ? projHistory.length: 0;
+                    resProj.billable = [];
+                    resProj.bench = [];
+                    resProj.total = [];
+                    resProj.labels = [];
+                    for (var idx= 0; idx < historyLen; idx++) {
+                        resProj.billable.push(projHistory[idx].billable);
+                        resProj.bench.push(projHistory[idx].bench);
+                        resProj.total.push(projHistory[idx].total);
+                        resProj.labels.push(projHistory[idx].created);
+                    }
+
+                    resProj.employees = project.employees;
+                    resProj._id = project._id;
+                    resProj.name = project.name;
+                    resProj.owner = project.owner;
+                    resProj.organization = project.organization;
+                    resProj.reddays = project.reddays;
+                    resProj.openpositions = project.openpositions;
+
+                    req.project=resProj;
+                    next();
+                });
         }
         else{
             var error={
@@ -93,7 +120,7 @@ exports.read=function(req,res){
 };
 
 exports.delete=function(req,res){
-    var project = req.project;
+    var project = new Projects (req.project);
 
     // TODO remove from employee
     var oldEmployees = project.employees || [];
@@ -126,11 +153,13 @@ exports.delete=function(req,res){
     }
 
 
-    // TODO remove this project from older organization
-    Organizations.findOne({name:project.organization},function(err,org){
-        org.projects.splice(org.projects.indexOf(project.name), 1);
-        org.save(function(err){ });
-    });
+    // remove this project from older organization
+    if (project.organization) {
+      Organizations.findOne({name:project.organization},function(err,org){
+          org.projects.splice(org.projects.indexOf(project.name), 1);
+          org.save(function(err){ });
+      });
+    }
 
     project.remove(function(err){
         if(err){
@@ -144,9 +173,9 @@ exports.delete=function(req,res){
 };
 
 exports.update=function(req,res){
-    var project = req.project;
+    var project = new Projects (req.project);
 
-    var newProject = req.body;
+    var newProject = new Projects (req.body);
 
     // req.body is new data while employee is old data
     var oldEmployees = project.employees || [];
