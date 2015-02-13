@@ -1,5 +1,4 @@
 var mongoose = require('mongoose'),
-    async = require('async'),
     Organizations = mongoose.model('Organizations'),
     OrganizationHistory = mongoose.model('OrganizationHistory'),
     Projects = mongoose.model('Projects');
