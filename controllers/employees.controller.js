@@ -121,7 +121,7 @@ exports.read=function(req,res){
 };
 
 exports.delete=function(req,res){
-    var employee = new Employees (req.employee);
+    var employee = req.employee;
 
     var oldProjects = employee.projects || [];
     for (var idx = 0; idx < oldProjects.length; idx ++){
@@ -202,9 +202,9 @@ exports.delete=function(req,res){
 };
 
 exports.update=function(req,res){
-    var employee = new Employees (req.employee);
+    var employee = req.employee;
     var oldEmpOrg = employee.organnization;
-    var newEmployee = new Employees (req.body);
+    var newEmployee = req.body;
 
     // req.body is new data while employee is old data
     var oldProjects = employee.projects || [];
@@ -401,6 +401,7 @@ exports.update=function(req,res){
     for (var i in req.body) {
         employee[i] = JSON.parse(JSON.stringify(req.body[i]));
     }
+
 
     employee.save(function(err){
         if(err){
