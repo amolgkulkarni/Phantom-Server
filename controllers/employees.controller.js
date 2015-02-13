@@ -84,15 +84,16 @@ exports.create=function(req,res){
                 if (orgHistory.length === 0) {
                     orgHistory.push({total: 0, billable: 0, bench: 0});
                 }
-                organizationHistory.total = orgHistory[0].total + 1;
+                organizationHistory.total = organization.total = orgHistory[0].total + 1;
                 if (employee.billable) {
-                    organizationHistory.billable = orgHistory[0].billable + 1;
+                    organizationHistory.billable = organization.billable = orgHistory[0].billable + 1;
                     organizationHistory.bench = orgHistory[0].bench;
                 }else {
-                    organizationHistory.billable = orgHistory[0].billable;
+                    organizationHistory.billable = organization.billable = orgHistory[0].billable;
                     organizationHistory.bench = orgHistory[0].bench + 1;
                 }
                 organizationHistory.save(function(err){});
+                organization.save(function(err){});
         });
     });
 };
@@ -188,15 +189,16 @@ exports.delete=function(req,res){
                 if (orgHistory.length === 0) {
                     orgHistory.push({total: 0, billable: 0, bench: 0});
                 }
-                organizationHistory.total = orgHistory[0].total - 1;
+                organizationHistory.total = organization.total = orgHistory[0].total - 1;
                 if (employee.billable) {
-                    organizationHistory.billable = orgHistory[0].billable - 1;
+                    organizationHistory.billable = organization.billable = orgHistory[0].billable - 1;
                     organizationHistory.bench = orgHistory[0].bench;
                 }else {
-                    organizationHistory.billable = orgHistory[0].billable;
+                    organizationHistory.billable = organization.billable = orgHistory[0].billable;
                     organizationHistory.bench = orgHistory[0].bench - 1;
                 }
                 organizationHistory.save(function(err){});
+                organization.save(function(err){});
             });
     });
 };
@@ -336,15 +338,16 @@ exports.update=function(req,res){
                         if (orgHistory.length === 0) {
                             orgHistory.push({total: 0, billable: 0, bench: 0});
                         }
-                        oldOrganizationHistory.total =  orgHistory[0].total - 1;
+                        oldOrganizationHistory.total =  oldorganization.total = orgHistory[0].total - 1;
                         if (employee.billable) {
-                            oldOrganizationHistory.billable = orgHistory[0].billable - 1;
+                            oldOrganizationHistory.billable = oldorganization.billable = orgHistory[0].billable - 1;
                             oldOrganizationHistory.bench = orgHistory[0].bench;
                         } else {
-                            oldOrganizationHistory.billable = orgHistory[0].billable;
+                            oldOrganizationHistory.billable = oldorganization.billable = orgHistory[0].billable;
                             oldOrganizationHistory.bench = orgHistory[0].bench - 1;
                         }
                         oldOrganizationHistory.save(function(err){console.log(err);});
+                        oldorganization.save(function(err){console.log(err);});
                     });
                 }
 
@@ -359,15 +362,16 @@ exports.update=function(req,res){
                         if (orgHistory1.length === 0) {
                             orgHistory1.push({total: 0, billable: 0, bench: 0});
                         }
-                        newOrganizationHistory.total =  orgHistory1[0].total + 1;
+                        newOrganizationHistory.total =  neworganization.total = orgHistory1[0].total + 1;
                         if (newEmployee.billable) {
-                            newOrganizationHistory.billable = orgHistory1[0].billable + 1;
+                            newOrganizationHistory.billable = neworganization.billable = orgHistory1[0].billable + 1;
                             newOrganizationHistory.bench = orgHistory1[0].bench;
                         } else {
-                            newOrganizationHistory.billable = orgHistory1[0].billable;
+                            newOrganizationHistory.billable = neworganization.billable = orgHistory1[0].billable;
                             newOrganizationHistory.bench = orgHistory1[0].bench + 1;
                         }
                         newOrganizationHistory.save(function(err){console.log(err);});
+                        neworganization.save(function(err){console.log(err);});
                     });
                 }
             });
@@ -384,15 +388,16 @@ exports.update=function(req,res){
                     if (orgHistory.length === 0) {
                         orgHistory.push({total: 0, billable: 0, bench: 0});
                     }
-                    organizationHistory.total = orgHistory[0].total;
+                    organizationHistory.total = organization.total = orgHistory[0].total;
                     if (newEmployee.billable) {
-                        organizationHistory.billable = orgHistory[0].billable + 1;
+                        organizationHistory.billable = organization.billable = orgHistory[0].billable + 1;
                         organizationHistory.bench = orgHistory[0].bench - 1;
                     }else {
-                        organizationHistory.billable = orgHistory[0].billable - 1;
+                        organizationHistory.billable = organization.billable = orgHistory[0].billable - 1;
                         organizationHistory.bench = orgHistory[0].bench + 1;
                     }
                     organizationHistory.save(function(err){});
+                    organization.save(function(err){});
                 });
         });
     }

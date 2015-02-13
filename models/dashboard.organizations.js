@@ -15,6 +15,14 @@ var OrganizationsSchema = new Schema({
         type:Number,
         required:true
     },
+    total:{
+        type: Number,
+        required: false
+    },
+    billable:{
+        type: Number,
+        required: false
+    },
     projects:{
         type:[String],
         required:false
